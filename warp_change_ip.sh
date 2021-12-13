@@ -29,6 +29,6 @@ do
 
     elif  [[ "$result" == "000" ]];then
 	echo -e "Failed, retrying..."
-        systemctl restart wg-quick@wgcf
+        sleep 120
     fi
 done
