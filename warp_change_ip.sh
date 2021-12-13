@@ -1,5 +1,6 @@
 UA_Browser="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36"
 area="SG"
+flag=0
 while true
 do
     result=$(curl --user-agent "${UA_Browser}" -fsL --write-out %{http_code} --output /dev/null --max-time 10 "https://www.netflix.com/title/81215567" 2>&1)
@@ -24,11 +25,19 @@ do
             sleep 3
         else
             echo -e "Region: ${region} Done, monitoring..."
+	    flag=0
             sleep 300
         fi
 
     elif  [[ "$result" == "000" ]];then
 	echo -e "Failed, retrying..."
-        sleep 120
+        if [[ flag<5 ]];then
+	    flag=flag+1
+            sleep 30
+        else
+            systemctl restart wg-quick@wgcf
+            flag=0
+            sleep 30
+        fi
     fi
 done
