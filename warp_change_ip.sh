@@ -30,11 +30,13 @@ do
         fi
 
     elif  [[ "$result" == "000" ]];then
-	echo -e "Failed, retrying..."
-        if [[ flag<5 ]];then
-	    flag=flag+1
+        echo -e "Failed, retrying..."
+        if [[ $flag -lt 5 ]];then
+            echo -e "Wait 30s"
+            flag=`expr $flag + 1`
             sleep 30
         else
+            echo -e "Restarting..."
             systemctl restart wg-quick@wgcf
             flag=0
             sleep 30
