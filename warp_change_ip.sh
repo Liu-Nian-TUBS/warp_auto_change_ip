@@ -20,9 +20,15 @@ do
 			region="US";
 		fi
         if [[ "$region" != "$area" ]];then
-            echo -e "Region: ${region} Not match, Changing IP..."
-            systemctl restart wg-quick@wgcf
-            sleep 3
+	    flag=`expr $flag + 1`
+	    if [[ $flag -gt 2 ]];then
+                echo -e "Region: ${region} Not match, Changing IP..."
+                systemctl restart wg-quick@wgcf
+                sleep 3
+	    else
+	        echo -e "Region: ${region} Not match, Trying again---"
+		sleep 15
+	    fi
         else
             echo -e "Region: ${region} Done, monitoring..."
 	    flag=0
@@ -32,14 +38,14 @@ do
     elif  [[ "$result" == "000" ]];then
         echo -e "Failed, retrying..."
         if [[ $flag -lt 5 ]];then
-            echo -e "Wait 30s"
+            echo -e "Wait 15s"
             flag=`expr $flag + 1`
-            sleep 30
+            sleep 15
         else
             echo -e "Restarting..."
             systemctl restart wg-quick@wgcf
             flag=0
-            sleep 30
+            sleep 15
         fi
     fi
 done
